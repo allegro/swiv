@@ -58,6 +58,7 @@
   },
   "dependencies": {
     "@sentry/browser": "5.0.6",
+    "@types/react-scrollbar": "0.4.10",
     "@vx/heatmap": "0.0.183",
     "@vx/scale": "0.0.182",
     "@vx/tooltip": "0.0.184",
@@ -71,6 +72,7 @@
     "file-saver": "1.3.3",
     "fs-promise": "2.0.3",
     "helmet": "3.12.0",
+    "html-react-parser": "0.7.0",
     "immutable": "4.0.0-rc.9",
     "immutable-class": "0.6.42",
     "js-yaml": "3.13.1",

@@ -33,6 +33,7 @@ describe("DateRangePicker", () => {
         timezone={Timezone.UTC}
         onStartChange={() => {}}
         onEndChange={() => {}}
+        index={0}
       />
     );
 
@@ -80,6 +81,7 @@ describe("DateRangePicker", () => {
           timezone={Timezone.UTC}
           onStartChange={() => {}}
           onEndChange={() => {}}
+          index={0}
         />);
     }).to.not.throw();
   });

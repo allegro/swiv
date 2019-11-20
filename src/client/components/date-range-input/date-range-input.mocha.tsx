@@ -31,6 +31,7 @@ describe("DateRangeInput", () => {
         onChange={null}
         time={null}
         timezone={null}
+        index={0}
       />
     );
 

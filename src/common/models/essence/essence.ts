@@ -271,7 +271,9 @@ export class Essence extends ImmutableRecord<EssenceValue>(defaultEssence) {
   }
 
   public evaluateSelection(filter: TimeFilterClause, timekeeper: Timekeeper): FixedTimeFilterClause {
-    if (filter instanceof FixedTimeFilterClause) return filter;
+    if (filter instanceof FixedTimeFilterClause) {
+      return filter;
+    }
     const { timezone, dataCube } = this;
     return filter.evaluate(timekeeper.now(), dataCube.getMaxTime(timekeeper), timezone);
   }
@@ -522,7 +524,6 @@ export class Essence extends ImmutableRecord<EssenceValue>(defaultEssence) {
     if (this.splits.length() > 0 && splitsWithFilters.length() !== 0) {
       strategy = VisStrategy.UnfairGame;
     }
-
     let newVisualization: Manifest = visualization;
     if (strategy !== VisStrategy.KeepAlways && strategy !== VisStrategy.UnfairGame) {
       const currentVisualization = (strategy === VisStrategy.FairGame ? null : visualization);

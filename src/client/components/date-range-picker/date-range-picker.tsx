@@ -16,13 +16,8 @@
  */
 
 import { day, month, Timezone } from "chronoshift";
-import { TimeRange } from "plywood";
 import * as React from "react";
-import { appendDays, datesEqual, formatYearMonth, getDayInMonth, monthToWeeks, prependDays } from "../../../common/utils/time/time";
-import { getLocale } from "../../config/constants";
-import { classNames } from "../../utils/dom/dom";
 import { DateRangeInput } from "../date-range-input/date-range-input";
-import { SvgIcon } from "../svg-icon/svg-icon";
 import "./date-range-picker.scss";
 
 export interface DateRangePickerProps {
@@ -30,194 +25,28 @@ export interface DateRangePickerProps {
   endTime?: Date;
   maxTime?: Date;
   timezone: Timezone;
-  onStartChange: (t: Date) => void;
-  onEndChange: (t: Date) => void;
+  onStartChange: (t: Date, i: number) => void;
+  onEndChange: (t: Date, i: number) => void;
+  index: int;
 }
 
 export interface DateRangePickerState {
-  activeMonthStartDate?: Date;
-  hoverTimeRange?: TimeRange;
-  selectionSet?: boolean;
+  start: Date;
+  end: Date;
 }
 
 export class DateRangePicker extends React.Component<DateRangePickerProps, DateRangePickerState> {
   constructor(props: DateRangePickerProps) {
     super(props);
-    this.state = {
-      activeMonthStartDate: null,
-      hoverTimeRange: null,
-      selectionSet: false
-    };
-  }
-
-  componentWillMount() {
-    const { startTime, timezone } = this.props;
-
-    const flooredStart = month.floor(startTime || new Date(), timezone);
-    this.setState({
-      activeMonthStartDate: flooredStart,
-      selectionSet: true
-    });
-  }
-
-  navigateToMonth(offset: number): void {
-    const { timezone } = this.props;
-    const { activeMonthStartDate } = this.state;
-    const newDate = month.shift(activeMonthStartDate, timezone, offset);
-    this.setState({
-      activeMonthStartDate: newDate
-    });
-  }
-
-  goToPreviousMonth = () => this.navigateToMonth(-1);
-
-  goToNextMonth = () => this.navigateToMonth(1);
-
-  calculateHoverTimeRange(mouseEnteredDay: Date) {
-    const { startTime, endTime } = this.props;
-    let hoverTimeRange: TimeRange = null;
-    if (startTime && !endTime) {
-      let start = startTime;
-      let end = mouseEnteredDay;
-      // if mousing over backwards, set end to old start time
-      if (mouseEnteredDay < startTime) {
-        start = mouseEnteredDay;
-        end = startTime;
-      }
-      hoverTimeRange = new TimeRange({ start, end, bounds: "[]" });
-    }
-
-    this.setState({ hoverTimeRange });
-  }
-
-  onCalendarMouseLeave = () => {
-    this.setState({ hoverTimeRange: null });
-  }
-
-  selectNewRange(startDate: Date, endDate?: Date) {
-    const { onStartChange, onEndChange, timezone } = this.props;
-    onStartChange(startDate);
-    // real end points are exclusive so +1 full day to selection (which is floored) to get the real end point
-    if (endDate) endDate = day.shift(endDate, timezone, 1);
-    onEndChange(endDate);
-  }
-
-  selectDay(selection: Date): void {
-    const { startTime } = this.props;
-    const { selectionSet } = this.state;
-
-    if (selectionSet) {
-      this.setState({ hoverTimeRange: null, selectionSet: false });
-      this.selectNewRange(selection, null);
-    } else {
-      const isDoubleClickSameDay = datesEqual(selection, startTime);
-      const isBackwardSelection = selection < startTime;
-
-      if (isDoubleClickSameDay) {
-        this.selectNewRange(startTime, startTime);
-      } else if (isBackwardSelection) {
-        this.selectNewRange(selection, startTime);
-      } else {
-        this.selectNewRange(startTime, selection);
-      }
-      this.setState({ selectionSet: true });
-    }
-  }
-
-  getIsSelectable(date: Date): boolean {
-    const { hoverTimeRange, selectionSet } = this.state;
-    let inHoverTimeRange = hoverTimeRange && hoverTimeRange.contains(date);
-    return inHoverTimeRange && !selectionSet;
-  }
-
-  renderDays(weeks: Date[][], monthStart: Date): JSX.Element[] {
-    const { startTime, endTime, maxTime, timezone } = this.props;
-    const startDay = day.floor(startTime, timezone);
-    const dayBeforeEnd = endTime && day.shift(endTime, timezone, -1);
-    const nextMonthStart = month.shift(monthStart, timezone, 1);
-
-    return weeks.map((daysInWeek: Date[], row: number) => {
-      return <div className="week" key={row}> {daysInWeek.map((dayDate: Date, column: number) => {
-        const isPast = dayDate < monthStart;
-        const isFuture = dayDate >= nextMonthStart;
-        const isBeyondMaxRange = dayDate > maxTime;
-        const isSelected = startDay <= dayDate && dayDate < endTime;
-        const isSelectedEdgeStart = datesEqual(dayDate, startTime);
-        const isSelectedEdgeEnd = datesEqual(dayDate, dayBeforeEnd);
-        const className = classNames("day", "value",
-          {
-            "past": isPast,
-            "future": isFuture,
-            "beyond-max-range": isBeyondMaxRange,
-            "selectable": this.getIsSelectable(dayDate),
-            "selected": isSelected,
-            "selected-edge": isSelectedEdgeStart || isSelectedEdgeEnd
-          });
-
-        return <div
-          className={className}
-          key={column}
-          onClick={this.selectDay.bind(this, dayDate)}
-          onMouseEnter={this.calculateHoverTimeRange.bind(this, dayDate)}
-        >{getDayInMonth(dayDate, timezone)}</div>;
-      })}</div>;
-    });
-  }
-
-  renderCalendar(startDate: Date): JSX.Element[] {
-    const { timezone } = this.props;
-    const weeks: Date[][] = monthToWeeks(startDate, timezone, getLocale());
-    const firstWeek = weeks[0];
-    const lastWeek = weeks[weeks.length - 1];
-    const countPrepend = 7 - firstWeek.length;
-    const countAppend = 7 - lastWeek.length;
-    weeks[0] = prependDays(timezone, firstWeek, countPrepend);
-    weeks[weeks.length - 1] = appendDays(timezone, lastWeek, countAppend);
-    return this.renderDays(weeks, startDate);
-  }
-
-  renderCalendarNav(startDate: Date): JSX.Element {
-    const { timezone } = this.props;
-
-    return <div className="calendar-nav">
-      <div
-        className="caret left"
-        onClick={this.goToPreviousMonth}
-      >
-        <SvgIcon svg={require("../../icons/full-caret-left.svg")} />
-      </div>
-      {formatYearMonth(startDate, timezone)}
-      <div
-        className="caret right"
-        onClick={this.goToNextMonth}
-      >
-        <SvgIcon svg={require("../../icons/full-caret-right.svg")} />
-      </div>
-    </div>;
   }
 
   render() {
-    const { startTime, endTime, timezone, onStartChange, onEndChange } = this.props;
-    const { activeMonthStartDate, selectionSet } = this.state;
-    if (!activeMonthStartDate) return null;
+    const { startTime, endTime, timezone, onStartChange, onEndChange, index } = this.props;
 
     return <div className="date-range-picker">
       <div>
-        <DateRangeInput label="Start" type="start" time={startTime} timezone={timezone} onChange={onStartChange} />
-        <DateRangeInput label="End" type="end" time={endTime} timezone={timezone} onChange={onEndChange} hide={!selectionSet} />
-      </div>
-      <div
-        className="calendar"
-        onMouseLeave={this.onCalendarMouseLeave}
-      >
-        {this.renderCalendarNav(activeMonthStartDate)}
-        <div className="week">
-          {getLocale().shortDays.map((day, i) => {
-            return <div className="day label" key={day + i}><span className="space" />{day}</div>;
-          })
-          }
-        </div>
-        {this.renderCalendar(activeMonthStartDate)}
+        <DateRangeInput label="Start" type="start" time={startTime} timezone={timezone} onChange={onStartChange} index={index} />
+        <DateRangeInput label="End" type="end" time={endTime} timezone={timezone} onChange={onEndChange} index={index} />
       </div>
     </div>;
   }

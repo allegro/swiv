@@ -95,12 +95,12 @@ export class PresetTimeTab extends React.Component<PresetTimeTabProps, PresetTim
 
     const latestPeriod = filterPeriod === TimeFilterPeriod.LATEST;
     return <InputWithPresets
-      title={STRINGS.latest}
-      presets={presets}
-      errorMessage={latestPeriod && !isValidDuration(filterDuration) && STRINGS.invalidDurationFormat}
-      selected={latestPeriod ? filterDuration : undefined}
-      onChange={(duration: string) => this.setFilter(TimeFilterPeriod.LATEST, duration)}
-      placeholder={STRINGS.durationsExamples} />;
+        title={STRINGS.latest}
+        presets={presets}
+        errorMessage={latestPeriod && !isValidDuration(filterDuration) && STRINGS.invalidDurationFormat}
+        selected={latestPeriod ? filterDuration : undefined}
+        onChange={(duration: string) => this.setFilter(TimeFilterPeriod.LATEST, duration)}
+        placeholder={STRINGS.durationsExamples} />;
   }
 
   private renderButtonGroup(title: string, period: TimeFilterPeriod) {
@@ -146,17 +146,16 @@ export class PresetTimeTab extends React.Component<PresetTimeTabProps, PresetTim
       {this.renderButtonGroup(STRINGS.previous, TimeFilterPeriod.PREVIOUS)}
       <div className="preview preview--with-spacing">{previewText}</div>
       <TimeShiftSelector
-        shift={timeShift}
-        time={previewFilter}
-        timezone={essence.timezone}
-        shiftValue={isValidTimeShift(timeShift) ? TimeShift.fromJS(timeShift) : null}
-        errorMessage={!isValidTimeShift(timeShift) && STRINGS.invalidDurationFormat}
-        onShiftChange={this.setTimeShift} />
+          shift={timeShift}
+          time={previewFilter}
+          timezone={essence.timezone}
+          shiftValue={isValidTimeShift(timeShift) ? TimeShift.fromJS(timeShift) : null}
+          errorMessage={!isValidTimeShift(timeShift) && STRINGS.invalidDurationFormat}
+          onShiftChange={this.setTimeShift} />
       <div className="ok-cancel-bar">
         <Button type="primary" onClick={this.saveTimeFilter} disabled={!this.validate()} title={STRINGS.ok} />
         <Button type="secondary" onClick={this.props.onClose} title={STRINGS.cancel} />
       </div>
     </div>;
   }
-
 }

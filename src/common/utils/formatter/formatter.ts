@@ -113,7 +113,11 @@ export function getFormattedClause(dimension: Dimension, clause: FilterClause, t
 
 function getFormattedTimeClauseValues(clause: TimeFilterClause, timezone: Timezone): string {
   if (clause instanceof FixedTimeFilterClause) {
-    return formatTimeRange(clause.values.get(0), timezone);
+    if (clause.values.size === 1) {
+      return formatTimeRange(clause.values.get(0), timezone);
+    } else {
+      return clause.values.size + " Time Sections";
+    }
   }
   const { period, duration } = clause;
   switch (period) {

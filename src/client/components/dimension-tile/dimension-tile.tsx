@@ -127,9 +127,9 @@ export class DimensionTile extends React.Component<DimensionTileProps, Dimension
       throw new Error(`Expected Time or Number FilterClause. Got ${clause.type}`);
     }
     return getDefaultGranularityForKind(
-      dimension.kind as ContinuousDimensionKind,
-      dimension.bucketedBy,
-      dimension.granularities);
+        dimension.kind as ContinuousDimensionKind,
+        dimension.bucketedBy,
+        dimension.granularities);
   }
 
   fetchData(essence: Essence, timekeeper: Timekeeper, dimension: Dimension, sortOn: SortOn, unfolded: boolean, selectedGranularity?: Bucket): void {
@@ -165,7 +165,7 @@ export class DimensionTile extends React.Component<DimensionTileProps, Dimension
     }
 
     let query: any = $("main")
-      .filter(filterExpression);
+        .filter(filterExpression);
 
     let sortExpression: Expression = null;
 
@@ -200,24 +200,24 @@ export class DimensionTile extends React.Component<DimensionTileProps, Dimension
       dataset: null
     });
     dataCube.executor(query, { timezone: essence.timezone })
-      .then(
-        (dataset: Dataset) => {
-          if (!this.mounted) return;
-          this.setState({
-            loading: false,
-            dataset,
-            error: null
-          });
-        },
-        error => {
-          if (!this.mounted) return;
-          this.setState({
-            loading: false,
-            dataset: null,
-            error
-          });
-        }
-      );
+        .then(
+            (dataset: Dataset) => {
+              if (!this.mounted) return;
+              this.setState({
+                loading: false,
+                dataset,
+                error: null
+              });
+            },
+            error => {
+              if (!this.mounted) return;
+              this.setState({
+                loading: false,
+                dataset: null,
+                error
+              });
+            }
+        );
   }
 
   updateFoldability(essence: Essence, dimension: Dimension, colors: Colors): boolean {
@@ -270,13 +270,13 @@ export class DimensionTile extends React.Component<DimensionTileProps, Dimension
     const persistedGranularity = differentTimeFilterSelection ? null : selectedGranularity;
 
     if (
-      essence.differentDataCube(nextEssence) ||
-      essence.differentEffectiveFilter(nextEssence, timekeeper, nextTimekeeper, unfolded ? dimension : null) ||
-      essence.differentColors(nextEssence) ||
-      !dimension.equals(nextDimension) ||
-      !SortOn.equals(sortOn, nextProps.sortOn) ||
-      (!essence.timezone.equals(nextEssence.timezone)) && dimension.kind === "time" ||
-      differentTimeFilterSelection
+        essence.differentDataCube(nextEssence) ||
+        essence.differentEffectiveFilter(nextEssence, timekeeper, nextTimekeeper, unfolded ? dimension : null) ||
+        essence.differentColors(nextEssence) ||
+        !dimension.equals(nextDimension) ||
+        !SortOn.equals(sortOn, nextProps.sortOn) ||
+        (!essence.timezone.equals(nextEssence.timezone)) && dimension.kind === "time" ||
+        differentTimeFilterSelection
     ) {
       this.fetchData(nextEssence, nextTimekeeper, nextDimension, nextSortOn, unfolded, persistedGranularity);
     }
@@ -350,7 +350,7 @@ export class DimensionTile extends React.Component<DimensionTileProps, Dimension
       return filter.removeClause(dimension.name).setClause(filterClause.update("values", values => values.add(value)));
     }
     return filter.setClause(filterClause.update("values", values =>
-      values.has(value) ? values.remove(value) : values.add(value)));
+        values.has(value) ? values.remove(value) : values.add(value)));
   }
 
   changeFilterMode(value: FilterMode) {
@@ -531,18 +531,18 @@ export class DimensionTile extends React.Component<DimensionTileProps, Dimension
           className += " " + (selected ? "selected" : "not-selected");
         }
         checkbox = <Checkbox
-          selected={selected}
-          type={isExcluded ? "cross" : "check"}
-          color={colorValues ? colorValues[i] : null}
+            selected={selected}
+            type={isExcluded ? "cross" : "check"}
+            color={colorValues ? colorValues[i] : null}
         />;
       }
 
       const segmentValueStr = this.getSegmentValueString(segmentValue as PlywoodValue);
 
       return <div
-        className={className}
-        key={segmentValueStr}
-        onClick={this.onRowClick.bind(this, segmentValue)}
+          className={className}
+          key={segmentValueStr}
+          onClick={this.onRowClick.bind(this, segmentValue)}
       >
         <div className="segment-value" title={segmentValueStr}>
           {checkbox}
@@ -569,8 +569,8 @@ export class DimensionTile extends React.Component<DimensionTileProps, Dimension
   private prepareFoldControl(isFoldable: boolean, unfolded: boolean): JSX.Element {
     if (isFoldable) {
       return <div
-        className={classNames("folder", unfolded ? "folded" : "unfolded")}
-        onClick={this.toggleFold}
+          className={classNames("folder", unfolded ? "folded" : "unfolded")}
+          onClick={this.toggleFold}
       >
         <SvgIcon svg={require("../../icons/caret.svg")} />
         {unfolded ? "Show selection" : "Show all"}
@@ -606,11 +606,11 @@ export class DimensionTile extends React.Component<DimensionTileProps, Dimension
     }
 
     const className = classNames(
-      "dimension-tile",
-      filterMode,
-      (foldControl ? "has-folder" : "no-folder"),
-      (colors ? "has-colors" : "no-colors"),
-      { continuous: isContinuous }
+        "dimension-tile",
+        filterMode,
+        (foldControl ? "has-folder" : "no-folder"),
+        (colors ? "has-colors" : "no-colors"),
+        { continuous: isContinuous }
     );
 
     const maxHeight = this.calculateTileHeight(rows.length, foldable);
@@ -644,16 +644,16 @@ export class DimensionTile extends React.Component<DimensionTileProps, Dimension
     }
 
     return <SearchableTile
-      style={style}
-      title={this.getTitleHeader()}
-      toggleChangeFn={this.toggleSearch}
-      onDragStart={this.onDragStart}
-      onSearchChange={this.onSearchChange}
-      searchText={searchText}
-      showSearch={showSearch}
-      icons={icons}
-      className={className}
-      actions={actions}>
+        style={style}
+        title={this.getTitleHeader()}
+        toggleChangeFn={this.toggleSearch}
+        onDragStart={this.onDragStart}
+        onSearchChange={this.onSearchChange}
+        searchText={searchText}
+        showSearch={showSearch}
+        icons={icons}
+        className={className}
+        actions={actions}>
       <div className="rows">
         {rows}
         {message}
