@@ -34,6 +34,7 @@ class Wrap extends React.Component {
         changePosition={null}
         onClose={null}
         openOn={document.createElement("div")}
+        refreshMaxTime={() => ""}
       />;
   }
 }

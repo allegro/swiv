@@ -38,6 +38,7 @@ export interface FilterMenuProps {
   dimension: Dimension;
   changePosition: DragPosition;
   onClose: Fn;
+  refreshMaxTime: Fn;
   inside?: Element;
 }
 

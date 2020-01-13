@@ -614,6 +614,7 @@ export class CubeView extends React.Component<CubeViewProps, CubeViewState> {
                 essence={essence}
                 timekeeper={timekeeper}
                 menuStage={visualizationStage}
+                refreshMaxTime={this.refreshMaxTime}
               />
               <SplitTile
                 ref={this.splitTile}

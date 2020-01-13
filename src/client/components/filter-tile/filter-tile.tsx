@@ -26,6 +26,7 @@ import { FilterClause, isTimeFilter } from "../../../common/models/filter-clause
 import { Stage } from "../../../common/models/stage/stage";
 import { Timekeeper } from "../../../common/models/timekeeper/timekeeper";
 import { getFormattedClause } from "../../../common/utils/formatter/formatter";
+import { Fn } from "../../../common/utils/general/general";
 import { Deferred } from "../../../common/utils/promise/promise";
 import { CORE_ITEM_GAP, CORE_ITEM_WIDTH, STRINGS } from "../../config/constants";
 import { classNames, findParentWithClass, getXFromEvent, isInside, setDragData, setDragGhost, transformStyle, uniqueId } from "../../utils/dom/dom";
@@ -56,6 +57,7 @@ export interface FilterTileProps {
   essence: Essence;
   timekeeper: Timekeeper;
   menuStage: Stage;
+  refreshMaxTime: Fn;
 }
 
 export interface FilterTileState {
@@ -354,7 +356,7 @@ export class FilterTile extends React.Component<FilterTileProps, FilterTileState
   }
 
   renderMenu(): JSX.Element {
-    const { essence, timekeeper, clicker, menuStage } = this.props;
+    const { essence, timekeeper, clicker, menuStage, refreshMaxTime } = this.props;
     const { menuOpenOn, menuDimension, menuInside, maxItems, overflowMenuOpenOn } = this.state;
     let { possiblePosition } = this.state;
     if (!menuDimension) return null;
@@ -373,6 +375,7 @@ export class FilterTile extends React.Component<FilterTileProps, FilterTileState
       changePosition={possiblePosition}
       onClose={this.closeMenu}
       inside={menuInside}
+      refreshMaxTime={refreshMaxTime}
     />;
   }
 

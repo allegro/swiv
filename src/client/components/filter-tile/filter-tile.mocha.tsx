@@ -32,6 +32,7 @@ describe("FilterTile", () => {
         essence={EssenceFixtures.wikiTotals()}
         timekeeper={TimekeeperFixtures.fixed()}
         menuStage={null}
+        refreshMaxTime={() => ""}
       />
     );
 

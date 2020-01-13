@@ -40,6 +40,7 @@ export interface TimeFilterMenuProps {
   onClose: Fn;
   containerStage?: Stage;
   openOn: Element;
+  refreshMaxTime: Fn;
   inside?: Element;
 }
 
@@ -57,8 +58,9 @@ export class TimeFilterMenu extends React.Component<TimeFilterMenuProps, TimeFil
   state: TimeFilterMenuState = { tab: null };
 
   componentWillMount() {
-    const { essence: { filter }, dimension } = this.props;
+    const { essence: { filter }, dimension, refreshMaxTime } = this.props;
     const clause = filter.clauseForReference(dimension.name);
+    refreshMaxTime();
     if (clause && !isTimeFilter(clause)) {
       throw new Error(`Expected TimeFilter. Got ${clause}`);
     }
