@@ -17,7 +17,7 @@
 
 import * as filesaver from "file-saver";
 import * as moment from "moment";
-import { Dataset, DatasetJSFull, TabulatorOptions } from "plywood";
+import { Dataset, DatasetJSFull, Finalizer, TabulatorOptions } from "plywood";
 import { FixedTimeFilterClause } from "../../../common/models/filter-clause/filter-clause";
 import { Filter } from "../../../common/models/filter/filter";
 import { complement } from "../../../common/utils/functional/functional";
@@ -37,7 +37,7 @@ export function getMIMEType(fileType: string) {
   }
 }
 
-export function download({ dataset, options }: DataSetWithTabOptions, fileFormat: FileFormat, fileName?: string): void {
+export function download({ dataset, options }: DataSetWithTabOptions, fileFormat: FileFormat, fileName?: string, custom?: boolean): void {
   const type = `${getMIMEType(fileFormat)};charset=utf-8`;
   const blob = new Blob([datasetToFileString(dataset, fileFormat, options)], { type });
   if (!fileName) fileName = `${new Date()}-data`;
@@ -45,11 +45,12 @@ export function download({ dataset, options }: DataSetWithTabOptions, fileFormat
   filesaver.saveAs(blob, fileName, true); // true == disable auto BOM
 }
 
-export function datasetToFileString(dataset: Dataset, fileFormat: FileFormat, options?: TabulatorOptions): string {
+export function datasetToFileString(dataset: Dataset, fileFormat?: FileFormat, options?: TabulatorOptions): string {
+  const optionsCopy = { ...options };
   if (fileFormat === "csv") {
-    return dataset.toCSV(options);
+    return dataset.toCSV(optionsCopy);
   } else if (fileFormat === "tsv") {
-    return dataset.toTSV(options);
+    return dataset.toTSV(optionsCopy);
   } else {
     const datasetJS = dataset.toJS() as DatasetJSFull;
     return JSON.stringify(datasetJS.data, null, 2);

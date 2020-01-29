@@ -699,6 +699,48 @@ Advanced options example:
 
 You can define a `customization:` section in the config to configure some aspects of the look and feel of Turnilo.
 
+You can define custom share options section (`shareOptions:`), which will force specific formatting on exported files. It will ovewrite two default CSV and TSV exports in the share menu. You can define specific properties for number, time and time range types in the `locale:` section. Locale and Locale Options sections are optional but they will be set to default values if not provided.
+
+```yaml
+  shareOptions:
+
+  - title: "excel friendly export to TSV" # name displayed in the share menu
+    format: # "tsv" | "csv"
+    separator: # "\t" | "," | ... 
+    lineBreak: "\r\n"
+    finalLineBreak: # "include" | "suppress"
+    columnOrdering: # "keys-first" | "as-seen";
+    locale:
+      NUMBER:
+        locale: # "pl-PL" | "us-EN" | ...; en-US by default
+        localeOptions: # Only applicable to NUMBER type. Each value is optional. Described here https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/toLocaleString
+            localeMatcher: # "lookup" | "best fit";
+            style: # "decimal" | "currency" | "percent" | "unit";
+            unit: # string;
+            unitDisplay: # "long" | "short" | "narrow";
+            currency: # ISO 4217 currency codes, e.g. "USD", "EUR" etc. Must be defined when style is set to "currency".
+            currencyDisplay: # "symbol" | "code" | "name";
+            useGrouping: # boolean; this variable controls whether number values should be exported with thousand separators applied, e.g. 1 000 000, 1.000.000; false by default
+            minimumIntegerDigits: # 1-21;
+            minimumFractionDigits: # 0-20;
+            maximumFractionDigits: # 0-20;
+            minimumSignificantDigits: # 1-21;
+            maximumSignificantDigits: # 1-21;
+            notation: # "standard" | "scientific" | "engineering" | "compact"
+      TIME:
+        timeFormat: # e.g. "DD-MM-YY HH"; "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]" by default
+      TIME_RANGE:
+        timeFormat: # e.g. "DD-MM-YY HH"; "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]" by default
+
+  - title: "excel friendly export to CSV" # name displayed in the share menu
+    format: csv
+    separator: ","
+    lineBreak: "\r\n"
+    finalLineBreak: include
+    columnOrdering: as-seen
+    # .... etc    
+```
+
 ### Visual
 
 Can customize the header background color and logo icon by supplying a color string and SVG string respectively.

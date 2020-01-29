@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
+import { Timezone } from "chronoshift";
 import { List } from "immutable";
+import * as moment from "moment";
 import { AttributeInfo, TabulatorOptions, TimeRange } from "plywood";
 import { Essence } from "../../../common/models/essence/essence";
+import { Locales } from "../../../common/models/locale/locale";
 import { ConcreteSeries, SeriesDerivation } from "../../../common/models/series/concrete-series";
 
 interface SeriesWithDerivation {
@@ -34,15 +37,13 @@ function findSeriesAndDerivation(name: string, concreteSeriesList: List<Concrete
   return null;
 }
 
-export default function tabularOptions(essence: Essence): TabulatorOptions {
+export default function tabularOptions(essence: Essence, locales?: Locales): TabulatorOptions {
   return {
     formatter: {
-      TIME_RANGE: (range: TimeRange) => range.start.toISOString()
-    },
-    attributeFilter: ({ name }: AttributeInfo) => {
-      return findSeriesAndDerivation(name, essence.getConcreteSeries()) !== null
-        || essence.dataCube.getDimension(name) !== undefined;
-    },
+      TIME_RANGE: (range: TimeRange, tz: Timezone) => moment.tz(range.start, tz.toString()).format(locales.TIME_RANGE.timeFormat),
+      TIME: (v: Date, tz: Timezone) => moment.tz(v, tz.toString()).format(locales.TIME.timeFormat),
+      NUMBER: (v: number) =>  v.toLocaleString(locales.NUMBER.locale, { ...locales.NUMBER.localeOptions })
+  },
     attributeTitle: ({ name }: AttributeInfo) => {
       const seriesWithDerivation = findSeriesAndDerivation(name, essence.getConcreteSeries());
       if (seriesWithDerivation) {

@@ -17,6 +17,7 @@
 
 import { expect } from "chai";
 import { Dataset } from "plywood";
+import { shareOptionsDefaults } from "../../../common/models/share-options/share-options";
 import "../../utils/test-utils";
 import { datasetToFileString, getMIMEType } from "./download";
 
@@ -27,8 +28,8 @@ describe("Download", () => {
         { y: ["dear", "john"] },
         { y: ["from", "peter"] }
       ]);
-      expect(datasetToFileString(ds, "csv").indexOf("\"dear, john\""), "csv").to.not.equal(-1);
-      expect(datasetToFileString(ds, "tsv").indexOf("dear, john"), "tsv").to.not.equal(-1);
+      expect(datasetToFileString(ds, "csv", shareOptionsDefaults[0]).indexOf("dear, john"), "csv").to.not.equal(-1);
+      expect(datasetToFileString(ds, "tsv", shareOptionsDefaults[1]).indexOf("dear, john"), "tsv").to.not.equal(-1);
     });
   });
 

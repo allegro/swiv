@@ -19,6 +19,7 @@ import { Timezone } from "chronoshift";
 import { Class, immutableArraysEqual, Instance } from "immutable-class";
 import { ImmutableUtils } from "../../utils/immutable-utils/immutable-utils";
 import { ExternalView, ExternalViewValue } from "../external-view/external-view";
+import { ClassShareOptions, ShareOptions } from "../share-options/share-options";
 import { UrlShortener, UrlShortenerDef } from "../url-shortener/url-shortener";
 
 export interface CustomizationValue {
@@ -30,6 +31,7 @@ export interface CustomizationValue {
   logoutHref?: string;
   urlShortener?: UrlShortener;
   sentryDSN?: string;
+  shareOptions?: ShareOptions;
 }
 
 export interface CustomizationJS {
@@ -41,6 +43,7 @@ export interface CustomizationJS {
   logoutHref?: string;
   urlShortener?: UrlShortenerDef;
   sentryDSN?: string;
+  shareOptions?: ShareOptions;
 }
 
 var check: Class<CustomizationValue, CustomizationJS>;
@@ -79,7 +82,8 @@ export class Customization implements Instance<CustomizationValue, Customization
       headerBackground: parameters.headerBackground,
       customLogoSvg: parameters.customLogoSvg,
       logoutHref: parameters.logoutHref,
-      sentryDSN: parameters.sentryDSN
+      sentryDSN: parameters.sentryDSN,
+      shareOptions: parameters.shareOptions
     };
 
     var paramViewsJS = parameters.externalViews;
@@ -100,6 +104,9 @@ export class Customization implements Instance<CustomizationValue, Customization
       value.urlShortener = UrlShortener.fromJS(parameters.urlShortener);
     }
 
+    const options = new ClassShareOptions(parameters.shareOptions);
+    value.shareOptions = options.getOptions();
+
     return new Customization(value);
   }
 
@@ -111,6 +118,7 @@ export class Customization implements Instance<CustomizationValue, Customization
   public logoutHref: string;
   public urlShortener: UrlShortener;
   public sentryDSN: string;
+  public shareOptions: ShareOptions;
 
   constructor(parameters: CustomizationValue) {
     this.title = parameters.title || null;
@@ -119,6 +127,7 @@ export class Customization implements Instance<CustomizationValue, Customization
     if (parameters.externalViews) this.externalViews = parameters.externalViews;
     if (parameters.timezones) this.timezones = parameters.timezones;
     this.logoutHref = parameters.logoutHref;
+    if (parameters.shareOptions) this.shareOptions = parameters.shareOptions;
     if (parameters.urlShortener) this.urlShortener = parameters.urlShortener;
     if (parameters.sentryDSN) this.sentryDSN = parameters.sentryDSN;
   }
@@ -132,7 +141,8 @@ export class Customization implements Instance<CustomizationValue, Customization
       timezones: this.timezones,
       urlShortener: this.urlShortener,
       logoutHref: this.logoutHref,
-      sentryDSN: this.sentryDSN
+      sentryDSN: this.sentryDSN,
+      shareOptions: this.shareOptions
     };
   }
 
@@ -152,6 +162,10 @@ export class Customization implements Instance<CustomizationValue, Customization
       js.urlShortener = this.urlShortener.toJS();
     }
     if (this.logoutHref) js.logoutHref = this.logoutHref;
+    if (this.shareOptions) {
+      // const options = new ClassShareOptions(this.shareOptions);
+      js.shareOptions = this.shareOptions;
+    }
     return js;
   }
 

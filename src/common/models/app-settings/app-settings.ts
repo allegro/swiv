@@ -23,6 +23,7 @@ import { Cluster, ClusterJS } from "../cluster/cluster";
 import { Customization, CustomizationJS } from "../customization/customization";
 import { DataCube, DataCubeJS } from "../data-cube/data-cube";
 import { Manifest } from "../manifest/manifest";
+import { shareOptionsDefaults } from "../share-options/share-options";
 
 export interface AppSettingsValue {
   version?: number;

@@ -17,8 +17,8 @@
 
 import { expect } from "chai";
 import { testImmutableClass } from "immutable-class-tester";
-
 import { DataCubeFixtures } from "../data-cube/data-cube.fixtures";
+import { shareOptionsDefaults } from "../share-options/share-options";
 import { AppSettings } from "./app-settings";
 import { AppSettingsFixtures } from "./app-settings.fixtures";
 
@@ -109,7 +109,7 @@ describe("AppSettings", () => {
     it("blank", () => {
       expect(AppSettings.BLANK.toJS()).to.deep.equal({
         clusters: [],
-        customization: {},
+        customization: { shareOptions: shareOptionsDefaults },
         dataCubes: []
       });
     });
@@ -127,7 +127,8 @@ describe("AppSettings", () => {
         customization: {
           customLogoSvg: "ansvgstring",
           headerBackground: "brown",
-          title: "Hello World"
+          title: "Hello World",
+          shareOptions: shareOptionsDefaults
         },
         dataCubes: [
           {

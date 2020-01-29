@@ -17,6 +17,7 @@
 
 import { expect } from "chai";
 import { testImmutableClass } from "immutable-class-tester";
+import { shareOptionsDefaults } from "../share-options/share-options";
 import { SuccessUrlShortenerJS } from "../url-shortener/url-shortener.fixtures";
 import { Customization, CustomizationJS } from "./customization";
 
@@ -26,12 +27,14 @@ describe("Customization", () => {
       {
         title: "Hello World",
         headerBackground: "brown",
-        customLogoSvg: "ansvgstring"
+        customLogoSvg: "ansvgstring",
+        shareOptions: shareOptionsDefaults
       },
       {
         urlShortener: SuccessUrlShortenerJS,
         headerBackground: "green",
-        externalViews: []
+        externalViews: [],
+        shareOptions: shareOptionsDefaults
       },
       {
         urlShortener: SuccessUrlShortenerJS,
@@ -49,19 +52,22 @@ describe("Customization", () => {
             title: "google docs",
             linkGenerator: "{ return 'http://182.343.32.2273:8080/'+timezone.timezone }"
           }
-        ]
+        ],
+        shareOptions: shareOptionsDefaults
       },
       {
         headerBackground: "green",
         externalViews: [],
-        timezones: ["Pacific/Niue", "America/Los_Angeles"]
+        timezones: ["Pacific/Niue", "America/Los_Angeles"],
+        shareOptions: shareOptionsDefaults
       },
       {
         headerBackground: "green",
         externalViews: [],
         urlShortener: SuccessUrlShortenerJS,
         timezones: ["Pacific/Niue", "America/Los_Angeles"],
-        logoutHref: "/log-me-out-now"
+        logoutHref: "/log-me-out-now",
+        shareOptions: shareOptionsDefaults
       }
     ]);
   });

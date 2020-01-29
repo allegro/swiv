@@ -19,6 +19,7 @@ import { basicExecutorFactory, Dataset } from "plywood";
 import { MANIFESTS } from "../../../common/manifests/index";
 import { ClusterFixtures } from "../cluster/cluster.fixtures";
 import { DataCubeFixtures } from "../data-cube/data-cube.fixtures";
+import { shareOptionsDefaults } from "../share-options/share-options";
 import { AppSettings, AppSettingsContext, AppSettingsJS } from "./app-settings";
 
 const SMALL_WIKI_DATA = [
@@ -290,7 +291,8 @@ export class AppSettingsFixtures {
       customization: {
         title: "Hello World",
         headerBackground: "brown",
-        customLogoSvg: "ansvgstring"
+        customLogoSvg: "ansvgstring",
+        shareOptions: shareOptionsDefaults
       },
       clusters: [
         ClusterFixtures.druidWikiClusterJS()
@@ -304,7 +306,8 @@ export class AppSettingsFixtures {
   public static wikiTwitterJS(): AppSettingsJS {
     return {
       customization: {
-        title: "Hello World"
+        title: "Hello World",
+        shareOptions: shareOptionsDefaults
       },
       clusters: [
         ClusterFixtures.druidWikiClusterJS(),

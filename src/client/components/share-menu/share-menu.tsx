@@ -19,12 +19,14 @@ import * as React from "react";
 import { Customization } from "../../../common/models/customization/customization";
 import { Essence } from "../../../common/models/essence/essence";
 import { ExternalView } from "../../../common/models/external-view/external-view";
+import { ShareOption, ShareOptions } from "../../../common/models/share-options/share-options";
 import { Stage } from "../../../common/models/stage/stage";
 import { Timekeeper } from "../../../common/models/timekeeper/timekeeper";
 import { Binary } from "../../../common/utils/functional/functional";
 import { Fn } from "../../../common/utils/general/general";
 import { exportOptions, STRINGS } from "../../config/constants";
 import { dateFromFilter, download, FileFormat, makeFileName } from "../../utils/download/download";
+import tabularOptions from "../../utils/tabular-options/tabular-options";
 import { DataSetWithTabOptions } from "../../views/cube-view/cube-view";
 import { BubbleMenu } from "../bubble-menu/bubble-menu";
 import { SafeCopyToClipboard } from "../safe-copy-to-clipboard/safe-copy-to-clipboard";
@@ -40,25 +42,38 @@ export interface ShareMenuProps {
   getDownloadableDataset?: () => DataSetWithTabOptions;
 }
 
-type ExportProps = Pick<ShareMenuProps, "onClose" | "essence" | "timekeeper" | "getDownloadableDataset">;
+type ExportProps = Pick<ShareMenuProps, "onClose" | "essence" | "timekeeper" | "getDownloadableDataset" | "customization" >;
 
-function onExport(fileFormat: FileFormat, props: ExportProps) {
+function onExport(shareOption: ShareOption, props: ExportProps) {
+
+  const { separator, lineBreak, finalLineBreak, columnOrdering, format, locale } = shareOption;
   const { onClose, getDownloadableDataset, essence, timekeeper } = props;
-  const dataSetWithTabOptions = getDownloadableDataset();
+
+  let dataSetWithTabOptions = getDownloadableDataset();
+  dataSetWithTabOptions.options = {
+    ...tabularOptions(essence, locale),
+    separator,
+    lineBreak,
+    finalLineBreak,
+    columnOrdering
+  };
+
   if (!dataSetWithTabOptions.dataset) return;
 
   const { dataCube } = essence;
   const effectiveFilter = essence.getEffectiveFilter(timekeeper);
 
   const fileName = makeFileName(dataCube.name, dateFromFilter(effectiveFilter));
-  download(dataSetWithTabOptions, fileFormat, fileName);
+  download(dataSetWithTabOptions, format, fileName, true);
   onClose();
 }
 
 function exportItems(props: ExportProps) {
-  return exportOptions.map(({ label, fileFormat }) =>
-    <li key={`export-${fileFormat}`} onClick={() => onExport(fileFormat, props)}>
-      {label}
+  const shareOptions: ShareOptions = props && props.customization && props.customization.shareOptions;
+
+  return shareOptions.map((shareOption, index) =>
+    <li key={`export-${index}`} onClick={() => onExport(shareOption, props)}>
+      {shareOption.title}
     </li>
   );
 }
@@ -116,8 +131,8 @@ function externalViewItems({ customization: { externalViews = [] }, essence }: E
 }
 
 export const ShareMenu: React.SFC<ShareMenuProps> = props => {
-  const { openOn, onClose } = props;
-
+  const { openOn, onClose, customization } = props;
+  const shareOptions = customization.shareOptions;
   return <BubbleMenu
     className="header-menu"
     direction="down"
