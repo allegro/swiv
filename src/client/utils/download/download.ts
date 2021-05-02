@@ -47,10 +47,11 @@ export function download({ dataset, options }: DataSetWithTabOptions, fileFormat
 }
 
 export function datasetToFileString(dataset: Dataset, fileFormat: FileFormat, options?: TabulatorOptions): string {
+  const optionsCopy = options ? { ...options } : {};
   if (fileFormat === "csv") {
-    return dataset.toCSV(options);
+    return dataset.toCSV(optionsCopy);
   } else if (fileFormat === "tsv") {
-    return dataset.toTSV(options);
+    return dataset.toTSV(optionsCopy);
   } else {
     const datasetJS = dataset.toJS() as DatasetJSFull;
     return JSON.stringify(datasetJS.data, null, 2);
