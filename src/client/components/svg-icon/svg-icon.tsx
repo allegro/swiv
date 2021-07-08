@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+import memoizeOne from "memoize-one";
 import * as React from "react";
 import "./svg-icon.scss";
 
@@ -30,32 +31,34 @@ export interface SvgIconState {
 }
 
 export class SvgIcon extends React.Component<SvgIconProps, SvgIconState> {
+  private svgDomNode: SVGSVGElement;
+
+  parseSvg = memoizeOne((svgContent: string): { viewBox: string | undefined, innerHTML: string } => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(svgContent, "image/svg+xml");
+
+    const svgs = doc.getElementsByTagName("svg");
+
+    if (svgs.length === 1) {
+      const svg = svgs[0];
+      const viewBox = svg.getAttribute("viewBox");
+      return { viewBox, innerHTML: svg.innerHTML };
+    }
+
+    return { viewBox: "0 0 16 16", innerHTML: '<rect width="16" height="16" fill="red" />' };
+  });
 
   render() {
     var { className, style, svg } = this.props;
 
-    var viewBox: string = null;
-    var svgInsides: string = null;
-    if (typeof svg === "string") {
-      svgInsides = svg
-        .substr(0, svg.length - 6) // remove trailing "</svg>"
-        .replace(/^<svg [^>]+>\s*/i, (svgDec: string) => {
-          var vbMatch = svgDec.match(/viewBox="([\d ]+)"/);
-          if (vbMatch) viewBox = vbMatch[1];
-          return "";
-        });
-    } else {
-      console.warn("svg-icon.tsx: missing icon");
-      viewBox = "0 0 16 16";
-      svgInsides = "<rect width=16 height=16 fill='red'></rect>";
-    }
+    const { viewBox, innerHTML } = this.parseSvg(svg);
 
     return React.createElement("svg", {
       className: "svg-icon " + (className || ""),
       viewBox,
       preserveAspectRatio: "xMidYMid meet",
       style,
-      dangerouslySetInnerHTML: { __html: svgInsides }
+      dangerouslySetInnerHTML: { __html: innerHTML }
     });
   }
 }
